@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package keys;
+
+message KeyRequest {
+    string key = 1;
+}
+
+message KeyResponse {
+    string exit_code = 1;
+}
+
+service KeyService {
+    rpc StreamKeys (stream KeyRequest) returns (KeyResponse) {}
+}
