@@ -21,19 +21,40 @@ import grpc
 import keys_pb2
 import keys_pb2_grpc
 
+import tkinter as tk
+from tkinter import filedialog
+from tkinter import ttk
 
-def run():
-    # NOTE(gRPC Python Team): .close() is possible on a channel and should be
-    # used in circumstances in which the with statement does not fit the needs
-    # of the code.
+import threading
+
+import queue
+send_queue = queue.SimpleQueue()  # or Queue if using Python before 3.7
+
+def onKeyPress(event):
+    print(event.char)
+    send_queue.push(keys_pb2.KeyRequest(key=""+event.char))
+
+def gpu_thread():
+    root = tk.Tk()
+    root.wait_visibility(root)
+    root.wm_attributes('-alpha',0.2)
+    root.bind('<KeyPress>', onKeyPress)
+    root.mainloop()
+
+def grpc_thread():
     with grpc.insecure_channel('4.tcp.ngrok.io:10274') as channel:
         stub = keys_pb2_grpc.KeyServiceStub(channel)
-        response = stub.StreamKeys(getKeys())
+        response = stub.StreamKeys(iter(send_queue.get, None))
     print("Exit Code: " + response.exit_code)
 
+def run():
+    threading.Thread(target=grpc_thread()).start()
+    threading.Thread(target=gpu_thread()).start()
+
 def getKeys():
+    print('get keys')
     for i in range(0, 4):
-        yield keys_pb2.KeyRequest(key="A")
+        yield keys_pb2.KeyRequest(key="B")
 
 if __name__ == '__main__':
     logging.basicConfig()
