@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 
-file = open('tk_keys.txt', 'a')
+file = open('client/tk_keys.txt', 'a')
 
 def on_key_press(event):
     file.write("{keysym},{keycode},{char},\n".format(keysym=event.keysym, keycode=event.keycode, char=event.char))

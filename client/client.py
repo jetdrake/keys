@@ -43,42 +43,42 @@ def on_key_press(event):
     if (event.keycode in pressed):
         return
 
-    print(event)
-    if (event.keycode == 32):
-        k = "SPACE"
-    elif (event.keycode == 17):
-        k = "LCONTROL"
-    elif (event.keycode == 50):
-        k = "LSHIFT"
-    elif (event.keycode == 36):
-        k = "RETURN"
-    elif (event.keycode == 8):
-        k = "BACK"
-    elif (event.keycode == 9):
-        k = "ESCAPE"
-    else:
-        k = event.char.upper()
-    print(k)
+    # print(event)
+    # if (event.keycode == 32):
+    #     k = "SPACE"
+    # elif (event.keycode == 17):
+    #     k = "LCONTROL"
+    # elif (event.keycode == 50):
+    #     k = "LSHIFT"
+    # elif (event.keycode == 36):
+    #     k = "RETURN"
+    # elif (event.keycode == 8):
+    #     k = "BACK"
+    # elif (event.keycode == 9):
+    #     k = "ESCAPE"
+    # else:
+    #     k = event.char.upper()
+    # print(k)
     pressed.append(event.keycode)
-    queue.append(k)
+    queue.append(event.keysym)
     #stub.PressKey(keys_pb2.KeyRequest(key=k))
     #grpc_send(iter([keys_pb2.KeyRequest(key=k)]))
 
 def on_key_release(event):
-    print(event)
-    if (event.keycode == 32):
-        k = "SPACE"
-    elif (event.keycode == 17):
-        k = "LCONTROL"
-    elif (event.keycode == 50):
-        k = "LSHIFT"
-    elif (event.keycode == 36):
-        k = "RETURN"
-    elif (event.keycode == 8):
-        k = "BACK"
-    else:
-        k = event.char.upper()
-    print(k)
+    # print(event)
+    # if (event.keycode == 32):
+    #     k = "SPACE"
+    # elif (event.keycode == 17):
+    #     k = "LCONTROL"
+    # elif (event.keycode == 50):
+    #     k = "LSHIFT"
+    # elif (event.keycode == 36):
+    #     k = "RETURN"
+    # elif (event.keycode == 8):
+    #     k = "BACK"
+    # else:
+    #     k = event.char.upper()
+    # print(k)
     #stub.ReleaseKey(keys_pb2.KeyRequest(key=k))
     pressed.remove(event.keycode)
 
@@ -104,7 +104,8 @@ def stream_get_keys():
     while True:
         if len(queue) > 0:
             k = queue.pop()
-            if k == "ESCAPE":
+            print(k)
+            if k == "escape":
                 return
             yield keys_pb2.KeyRequest(key=k)
         
