@@ -70,7 +70,7 @@ def stream_get_keys():
         if len(press_queue) > 0:
             press = press_queue.pop()
             if press == "escape":
-                return
+                break
             yield keys_pb2.KeyEvent(type=keys_pb2.PRESS, key=press)
         if len(release_queue) > 0:
             release = release_queue.pop()
