@@ -12,4 +12,6 @@ message KeyResponse {
 
 service KeyService {
     rpc StreamKeys (stream KeyRequest) returns (KeyResponse) {}
+    rpc PressKey (KeyRequest) returns (KeyResponse) {}
+    rpc ReleaseKey (KeyRequest) returns (KeyResponse) {}
 }

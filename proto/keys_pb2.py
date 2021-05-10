@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\nkeys.proto\x12\x04keys\"\x19\n\nKeyRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\" \n\x0bKeyResponse\x12\x11\n\texit_code\x18\x01 \x01(\t2C\n\nKeyService\x12\x35\n\nStreamKeys\x12\x10.keys.KeyRequest\x1a\x11.keys.KeyResponse\"\x00(\x01\x62\x06proto3'
+  serialized_pb=b'\n\nkeys.proto\x12\x04keys\"\x19\n\nKeyRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\" \n\x0bKeyResponse\x12\x11\n\texit_code\x18\x01 \x01(\t2\xab\x01\n\nKeyService\x12\x35\n\nStreamKeys\x12\x10.keys.KeyRequest\x1a\x11.keys.KeyResponse\"\x00(\x01\x12\x31\n\x08PressKey\x12\x10.keys.KeyRequest\x1a\x11.keys.KeyResponse\"\x00\x12\x33\n\nReleaseKey\x12\x10.keys.KeyRequest\x1a\x11.keys.KeyResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -115,13 +115,33 @@ _KEYSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=81,
-  serialized_end=148,
+  serialized_start=82,
+  serialized_end=253,
   methods=[
   _descriptor.MethodDescriptor(
     name='StreamKeys',
     full_name='keys.KeyService.StreamKeys',
     index=0,
+    containing_service=None,
+    input_type=_KEYREQUEST,
+    output_type=_KEYRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='PressKey',
+    full_name='keys.KeyService.PressKey',
+    index=1,
+    containing_service=None,
+    input_type=_KEYREQUEST,
+    output_type=_KEYRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='ReleaseKey',
+    full_name='keys.KeyService.ReleaseKey',
+    index=2,
     containing_service=None,
     input_type=_KEYREQUEST,
     output_type=_KEYRESPONSE,

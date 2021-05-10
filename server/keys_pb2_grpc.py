@@ -19,6 +19,16 @@ class KeyServiceStub(object):
                 request_serializer=keys__pb2.KeyRequest.SerializeToString,
                 response_deserializer=keys__pb2.KeyResponse.FromString,
                 )
+        self.PressKey = channel.unary_unary(
+                '/keys.KeyService/PressKey',
+                request_serializer=keys__pb2.KeyRequest.SerializeToString,
+                response_deserializer=keys__pb2.KeyResponse.FromString,
+                )
+        self.ReleaseKey = channel.unary_unary(
+                '/keys.KeyService/ReleaseKey',
+                request_serializer=keys__pb2.KeyRequest.SerializeToString,
+                response_deserializer=keys__pb2.KeyResponse.FromString,
+                )
 
 
 class KeyServiceServicer(object):
@@ -30,11 +40,33 @@ class KeyServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def PressKey(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ReleaseKey(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_KeyServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'StreamKeys': grpc.stream_unary_rpc_method_handler(
                     servicer.StreamKeys,
+                    request_deserializer=keys__pb2.KeyRequest.FromString,
+                    response_serializer=keys__pb2.KeyResponse.SerializeToString,
+            ),
+            'PressKey': grpc.unary_unary_rpc_method_handler(
+                    servicer.PressKey,
+                    request_deserializer=keys__pb2.KeyRequest.FromString,
+                    response_serializer=keys__pb2.KeyResponse.SerializeToString,
+            ),
+            'ReleaseKey': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReleaseKey,
                     request_deserializer=keys__pb2.KeyRequest.FromString,
                     response_serializer=keys__pb2.KeyResponse.SerializeToString,
             ),
@@ -60,6 +92,40 @@ class KeyService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.stream_unary(request_iterator, target, '/keys.KeyService/StreamKeys',
+            keys__pb2.KeyRequest.SerializeToString,
+            keys__pb2.KeyResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def PressKey(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/keys.KeyService/PressKey',
+            keys__pb2.KeyRequest.SerializeToString,
+            keys__pb2.KeyResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ReleaseKey(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/keys.KeyService/ReleaseKey',
             keys__pb2.KeyRequest.SerializeToString,
             keys__pb2.KeyResponse.FromString,
             options, channel_credentials,

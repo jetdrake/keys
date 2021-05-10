@@ -27,34 +27,56 @@ from tkinter import ttk
 
 import threading
 
-channel = grpc.insecure_channel('localhost:50051')
-stub = keys_pb2_grpc.KeyServiceStub(channel)
+# NOTE: need to map keycodes.csv to tkinter keycodes
 
-def onKeyPress(event):
-    print(event.char.upper())
-    grpc_send(iter([keys_pb2.KeyRequest(key=event.char.upper())]))
+channel = grpc.insecure_channel('0.tcp.ngrok.io:14890')
+stub = keys_pb2_grpc.KeyServiceStub(channel)
+pressed = []
+
+def on_key_press(event):
+
+    if (event.keycode in pressed):
+        return
+
+    print(event)
+    if (event.keycode == 32):
+        k = "SPACE"
+    elif (event.keycode == 17):
+        k = "LCONTROL"
+    elif (event.keycode == 50):
+        k = "LSHIFT"
+    elif (event.keycode == 36):
+        k = "RETURN"
+    elif (event.keycode == 8):
+        k = "BACK"
+    else:
+        k = event.char.upper()
+    print(k)
+    pressed.append(event.keycode)
+    stub.PressKey(keys_pb2.KeyRequest(key=k))
+    #grpc_send(iter([keys_pb2.KeyRequest(key=k)]))
+
+def on_key_release(event):
+    stub.ReleaseKey(keys_pb2.KeyRequest(key=k))
+    pressed.remove(event.keycode)
+    print(event)
+
 
 def gpu_thread():
     print('gpu thread intialized')
     root = tk.Tk()
     root.wait_visibility(root)
-    root.wm_attributes('-alpha',0.01)
-    root.bind('<KeyPress>', onKeyPress)
+    root.wm_attributes('-alpha',0.1)
+    root.bind('<KeyPress>', on_key_press)
+    root.bind('<KeyRelease>', on_key_release)
     root.mainloop()
 
 def grpc_send(key):
-    # with grpc.insecure_channel('localhost:50051') as channel:
-    #     stub = keys_pb2_grpc.KeyServiceStub(channel)
     response = stub.StreamKeys(key)
     print("Exit Code: " + response.exit_code)
 
 def run():
     threading.Thread(target=gpu_thread()).start()
-
-def getKeys():
-    print('get keys')
-    for i in range(0, 4):
-        yield keys_pb2.KeyRequest(key="B")
 
 if __name__ == '__main__':
     logging.basicConfig()

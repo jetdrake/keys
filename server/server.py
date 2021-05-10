@@ -16,6 +16,20 @@ class KeyServicer(keys_pb2_grpc.KeyService):
             send.KeyPress(int(keycodes.keycodes().keydict.get(request.key), 16))
         return keys_pb2.KeyResponse(exit_code="success")
 
+    def PressKey(self, request, context):
+        print(request)
+        send.PressKey(request.key)
+        return keys_pb2.KeyResponse(exit_code="success")
+
+
+    def ReleaseKey(self, request, context):
+        print(request)
+        send.ReleaseKey(request.key)
+        return keys_pb2.KeyResponse(exit_code="success")
+
+
+
+
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
