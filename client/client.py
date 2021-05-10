@@ -28,8 +28,11 @@ from tkinter import ttk
 import threading
 
 # NOTE: need to map keycodes.csv to tkinter keycodes
+address = "localhost:50051"
+with open('address.txt', 'r') as file:
+    address = file.read()
 
-channel = grpc.insecure_channel('0.tcp.ngrok.io:14890')
+channel = grpc.insecure_channel(address)
 stub = keys_pb2_grpc.KeyServiceStub(channel)
 pressed = []
 
@@ -57,9 +60,22 @@ def on_key_press(event):
     #grpc_send(iter([keys_pb2.KeyRequest(key=k)]))
 
 def on_key_release(event):
+    print(event)
+    if (event.keycode == 32):
+        k = "SPACE"
+    elif (event.keycode == 17):
+        k = "LCONTROL"
+    elif (event.keycode == 50):
+        k = "LSHIFT"
+    elif (event.keycode == 36):
+        k = "RETURN"
+    elif (event.keycode == 8):
+        k = "BACK"
+    else:
+        k = event.char.upper()
+    print(k)
     stub.ReleaseKey(keys_pb2.KeyRequest(key=k))
     pressed.remove(event.keycode)
-    print(event)
 
 
 def gpu_thread():
