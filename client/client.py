@@ -36,6 +36,7 @@ with open('address.txt', 'r') as file:
 channel = grpc.insecure_channel(address)
 stub = keys_pb2_grpc.KeyServiceStub(channel)
 pressed = []
+queue = []
 
 def on_key_press(event):
 
@@ -53,11 +54,14 @@ def on_key_press(event):
         k = "RETURN"
     elif (event.keycode == 8):
         k = "BACK"
+    elif (event.keycode == 9):
+        k = "ESCAPE"
     else:
         k = event.char.upper()
     print(k)
     pressed.append(event.keycode)
-    stub.PressKey(keys_pb2.KeyRequest(key=k))
+    queue.append(k)
+    #stub.PressKey(keys_pb2.KeyRequest(key=k))
     #grpc_send(iter([keys_pb2.KeyRequest(key=k)]))
 
 def on_key_release(event):
@@ -75,7 +79,7 @@ def on_key_release(event):
     else:
         k = event.char.upper()
     print(k)
-    stub.ReleaseKey(keys_pb2.KeyRequest(key=k))
+    #stub.ReleaseKey(keys_pb2.KeyRequest(key=k))
     pressed.remove(event.keycode)
 
 
@@ -97,10 +101,13 @@ def grpc_send(key):
     print("Exit Code: " + response.exit_code)
 
 def stream_get_keys():
-    for i in range(10):
-        print(i)
-        time.sleep(1)
-        yield keys_pb2.KeyRequest(key="t")
+    while True:
+        if len(queue) > 0:
+            k = queue.pop()
+            if k == "ESCAPE":
+                return
+            yield keys_pb2.KeyRequest(key=k)
+        
 
 def grpc_stream():
     stub.StreamKeys(iter(stream_get_keys()))
