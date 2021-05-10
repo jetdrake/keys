@@ -7,24 +7,28 @@ import keys_pb2_grpc
 import keycodes
 import send
 
+tk = keycodes.keycodes()
+
+
+
 class KeyServicer(keys_pb2_grpc.KeyService):
 
     def StreamKeys(self, request_iterator, context):
         
         for request in request_iterator:
             print(request.key)
-            send.KeyPress(int(keycodes.keycodes().keydict.get(request.key.upper()), 16))
+            send.KeyPress(int(tk.keydict.get(request.key), 16))
         return keys_pb2.KeyResponse(exit_code="success")
 
     def PressKey(self, request, context):
         print(request)
-        send.PressKey(int(keycodes.keycodes().keydict.get(request.key.upper()), 16))
+        send.PressKey(int(tk.keydict.get(request.key), 16))
         return keys_pb2.KeyResponse(exit_code="success")
 
 
     def ReleaseKey(self, request, context):
         print(request)
-        send.ReleaseKey(int(keycodes.keycodes().keydict.get(request.key.upper()), 16))
+        send.ReleaseKey(int(tk.keydict.get(request.key), 16))
         return keys_pb2.KeyResponse(exit_code="success")
 
 
