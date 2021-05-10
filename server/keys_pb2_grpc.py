@@ -19,6 +19,11 @@ class KeyServiceStub(object):
                 request_serializer=keys__pb2.KeyRequest.SerializeToString,
                 response_deserializer=keys__pb2.KeyResponse.FromString,
                 )
+        self.StreamKeyEvents = channel.stream_unary(
+                '/keys.KeyService/StreamKeyEvents',
+                request_serializer=keys__pb2.KeyEvent.SerializeToString,
+                response_deserializer=keys__pb2.KeyResponse.FromString,
+                )
         self.PressKey = channel.unary_unary(
                 '/keys.KeyService/PressKey',
                 request_serializer=keys__pb2.KeyRequest.SerializeToString,
@@ -35,6 +40,12 @@ class KeyServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def StreamKeys(self, request_iterator, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def StreamKeyEvents(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -58,6 +69,11 @@ def add_KeyServiceServicer_to_server(servicer, server):
             'StreamKeys': grpc.stream_unary_rpc_method_handler(
                     servicer.StreamKeys,
                     request_deserializer=keys__pb2.KeyRequest.FromString,
+                    response_serializer=keys__pb2.KeyResponse.SerializeToString,
+            ),
+            'StreamKeyEvents': grpc.stream_unary_rpc_method_handler(
+                    servicer.StreamKeyEvents,
+                    request_deserializer=keys__pb2.KeyEvent.FromString,
                     response_serializer=keys__pb2.KeyResponse.SerializeToString,
             ),
             'PressKey': grpc.unary_unary_rpc_method_handler(
@@ -93,6 +109,23 @@ class KeyService(object):
             metadata=None):
         return grpc.experimental.stream_unary(request_iterator, target, '/keys.KeyService/StreamKeys',
             keys__pb2.KeyRequest.SerializeToString,
+            keys__pb2.KeyResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def StreamKeyEvents(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_unary(request_iterator, target, '/keys.KeyService/StreamKeyEvents',
+            keys__pb2.KeyEvent.SerializeToString,
             keys__pb2.KeyResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

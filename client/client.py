@@ -36,51 +36,20 @@ with open('address.txt', 'r') as file:
 channel = grpc.insecure_channel(address)
 stub = keys_pb2_grpc.KeyServiceStub(channel)
 pressed = []
-queue = []
+press_queue = []
+release_queue = []
 
 def on_key_press(event):
 
     if (event.keycode in pressed):
         return
 
-    # print(event)
-    # if (event.keycode == 32):
-    #     k = "SPACE"
-    # elif (event.keycode == 17):
-    #     k = "LCONTROL"
-    # elif (event.keycode == 50):
-    #     k = "LSHIFT"
-    # elif (event.keycode == 36):
-    #     k = "RETURN"
-    # elif (event.keycode == 8):
-    #     k = "BACK"
-    # elif (event.keycode == 9):
-    #     k = "ESCAPE"
-    # else:
-    #     k = event.char.upper()
-    # print(k)
     pressed.append(event.keycode)
-    queue.append(event.keysym)
-    #stub.PressKey(keys_pb2.KeyRequest(key=k))
-    #grpc_send(iter([keys_pb2.KeyRequest(key=k)]))
+    press_queue.append(event.keysym)
 
 def on_key_release(event):
-    # print(event)
-    # if (event.keycode == 32):
-    #     k = "SPACE"
-    # elif (event.keycode == 17):
-    #     k = "LCONTROL"
-    # elif (event.keycode == 50):
-    #     k = "LSHIFT"
-    # elif (event.keycode == 36):
-    #     k = "RETURN"
-    # elif (event.keycode == 8):
-    #     k = "BACK"
-    # else:
-    #     k = event.char.upper()
-    # print(k)
-    #stub.ReleaseKey(keys_pb2.KeyRequest(key=k))
     pressed.remove(event.keycode)
+    release_queue.append(event.keysym)
 
 
 def gpu_thread():
@@ -96,22 +65,20 @@ def gpu_thread():
 
     root.mainloop()
 
-def grpc_send(key):
-    response = stub.StreamKeys(key)
-    print("Exit Code: " + response.exit_code)
-
 def stream_get_keys():
     while True:
-        if len(queue) > 0:
-            k = queue.pop()
-            print(k)
-            if k == "escape":
+        if len(press_queue) > 0:
+            press = press_queue.pop()
+            if press == "escape":
                 return
-            yield keys_pb2.KeyRequest(key=k)
+            yield keys_pb2.KeyEvent(type=keys_pb2.PRESS, key=press)
+        if len(release_queue) > 0:
+            release = release_queue.pop()
+            yield keys_pb2.KeyEvent(type=keys_pb2.RELEASE, key=release)
         
 
 def grpc_stream():
-    stub.StreamKeys(iter(stream_get_keys()))
+    stub.StreamKeyEvents(iter(stream_get_keys()))
     print('other thread')
     #stream_get_keys()
 

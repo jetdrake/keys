@@ -20,6 +20,16 @@ class KeyServicer(keys_pb2_grpc.KeyService):
             send.KeyPress(int(tk.keydict.get(request.key), 16))
         return keys_pb2.KeyResponse(exit_code="success")
 
+    def StreamKeyEvents(self, request_iterator, context):
+        for request in request_iterator:
+            print(request.key)
+            k = int(tk.keydict.get(request.key), 16)
+            if (request.type == keys_pb2.PRESS):
+                send.PressKey(k)
+            elif (request.type == keys_pb2.RELEASE):
+                send.ReleaseKey(k)
+        return keys_pb2.KeyResponse(exit_code="success")
+
     def PressKey(self, request, context):
         print(request)
         send.PressKey(int(tk.keydict.get(request.key), 16))

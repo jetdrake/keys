@@ -10,8 +10,21 @@ message KeyResponse {
     string exit_code = 1;
 }
 
+message KeyEvent {
+    KeyEventType type = 1;
+    string key = 2;
+}
+
+enum KeyEventType {
+    UNIVERSAL = 0;
+    PRESS = 1;
+    RELEASE = 2;
+    FULLPRESS = 3;
+}
+
 service KeyService {
     rpc StreamKeys (stream KeyRequest) returns (KeyResponse) {}
+    rpc StreamKeyEvents (stream KeyEvent) returns (KeyResponse) {}
     rpc PressKey (KeyRequest) returns (KeyResponse) {}
     rpc ReleaseKey (KeyRequest) returns (KeyResponse) {}
 }
