@@ -13,18 +13,18 @@ class KeyServicer(keys_pb2_grpc.KeyService):
         
         for request in request_iterator:
             print(request.key)
-            send.KeyPress(int(keycodes.keycodes().keydict.get(request.key), 16))
+            send.KeyPress(int(keycodes.keycodes().keydict.get(request.key.upper()), 16))
         return keys_pb2.KeyResponse(exit_code="success")
 
     def PressKey(self, request, context):
         print(request)
-        send.PressKey(request.key)
+        send.PressKey(int(keycodes.keycodes().keydict.get(request.key.upper()), 16))
         return keys_pb2.KeyResponse(exit_code="success")
 
 
     def ReleaseKey(self, request, context):
         print(request)
-        send.ReleaseKey(request.key)
+        send.ReleaseKey(int(keycodes.keycodes().keydict.get(request.key.upper()), 16))
         return keys_pb2.KeyResponse(exit_code="success")
 
 

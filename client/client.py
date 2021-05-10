@@ -25,7 +25,8 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 
-import threading
+from threading import *
+import time
 
 # NOTE: need to map keycodes.csv to tkinter keycodes
 address = "localhost:50051"
@@ -85,14 +86,30 @@ def gpu_thread():
     root.wm_attributes('-alpha',0.1)
     root.bind('<KeyPress>', on_key_press)
     root.bind('<KeyRelease>', on_key_release)
+
+    t1=Thread(target=grpc_stream)
+    t1.start()
+
     root.mainloop()
 
 def grpc_send(key):
     response = stub.StreamKeys(key)
     print("Exit Code: " + response.exit_code)
 
+def stream_get_keys():
+    for i in range(10):
+        print(i)
+        time.sleep(1)
+        yield keys_pb2.KeyRequest(key="t")
+
+def grpc_stream():
+    stub.StreamKeys(iter(stream_get_keys()))
+    print('other thread')
+    #stream_get_keys()
+
+
 def run():
-    threading.Thread(target=gpu_thread()).start()
+    gpu_thread()
 
 if __name__ == '__main__':
     logging.basicConfig()
